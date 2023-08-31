@@ -1,14 +1,15 @@
 import aws_cdk as cdk
-import config as config
+from nyu_protein_website_deploy.config import config
 
-from packages.aws_cdk import (
+from aws_cdk import (
     aws_s3 as s3,
     aws_s3_deployment as s3deploy,
     aws_cloudfront as cloudfront,
     aws_cloudfront_origins as origins,
     aws_certificatemanager as acm,
+    RemovalPolicy as removalPolicy,
 )
-from packages.aws_solutions_constructs.aws_cloudfront_s3 import CloudFrontToS3
+# from packages.aws_solutions_constructs.aws_cloudfront_s3 import CloudFrontToS3
 
 class NyuProteinCloudFrontS3DeployStack(cdk.Stack):
     def __init__(self, scope, id, **kwargs):
@@ -36,7 +37,7 @@ class NyuProteinCloudFrontS3DeployStack(cdk.Stack):
             'static-website-for-cdkdemo',
             bucket_name = config.WEB_BUCKET_NAME,
             # website_index_document="index.html",
-            removal_policy=cdk.RemovalPolicy.DESTROY,
+            removal_policy=removalPolicy.DESTROY,
             access_control=s3.BucketAccessControl.PRIVATE,
         )
 
@@ -56,13 +57,12 @@ class NyuProteinCloudFrontS3DeployStack(cdk.Stack):
         """ Returns a CDN that delivers from a S3 bucket """
         return cloudfront.Distribution(
             self,
-            'myDist',
+            'ProteinDataWebsiteDist',
             default_behavior=cloudfront.BehaviorOptions(
                 origin=origins.S3Origin(
                     self.s3_bucket,
                     origin_access_identity=access_identity,
                 ),
-                
             ),
             domain_names = [config.WEB_DOMAIN_NAME],
             default_root_object=config.WEB_ROOT_FILE,

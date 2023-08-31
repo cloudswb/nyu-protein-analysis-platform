@@ -1,5 +1,5 @@
 import aws_cdk as cdk
-from nyu_protein_website_deploy.config import Config
+from nyu_protein_website_deploy.config import config
 
 from constructs import Construct
 from aws_cdk import (aws_apigateway as apigateway,
@@ -8,13 +8,13 @@ from aws_cdk import (aws_apigateway as apigateway,
                      Stack,
                      aws_lambda as _lambda)
 
-class NyuProteinLayerDeployStack(Stack):
+class NyuProteinLayerLambdaDeployStack(Stack):
     
     def __init__(self, scope: Construct, construct_id: str, **kwargs) -> None:
         super().__init__(scope, construct_id, **kwargs)
 
         pymysql_layer = _lambda.LayerVersion(self, 'pymysql',
-            code=_lambda.Code.from_asset(path='./layers/pymysql'),
+            code=_lambda.AssetCode.from_asset(path='./layers/pymysql'),
             compatible_runtimes=[_lambda.Runtime.PYTHON_3_9],
             description='PyMySQL Lambda Layer'
         )
@@ -29,16 +29,16 @@ class NyuProteinLayerDeployStack(Stack):
         # vpc = ec2.Vpc(self, 'MyVpc', max_azs=2)  # Adjust properties as needed
         # existing_vpc = ec2.Vpc.from_vpc_attributes(self, "ExistingVPC", vpc_id=VPC_ID, availability_zones = ec2.get_available_zones(self))
 
-        existing_vpc = ec2.Vpc.from_lookup(self, "vpc", vpc_id=Config.VPC_ID)
+        existing_vpc = ec2.Vpc.from_lookup(self, "vpc", vpc_id=config.VPC_ID)
         
         timeout_seconds = 30
 
         # Define environment variables
         og_query_function_env_vars = {
-            'DB_NAME': 'nyu-og',
-            'PASSWORD': '4z(hFH-({u2Y*g:$BL{!D$Rp%H_!',
-            'RDS_HOST': 'nyu-database.cluster-cnfpwwtkftli.us-east-1.rds.amazonaws.com',
-            'USER_NAME': 'awsuser',
+            'DB_NAME': config.MYSQL_DB_NAME,
+            'PASSWORD': config.MYSQL_PASSWORD,
+            'RDS_HOST': config.MYSQL_RDS_HOST,
+            'USER_NAME': config.MYSQL_USER_NAME,
         }
 
         # Create Lambda functions using the uploaded layer
@@ -55,7 +55,7 @@ class NyuProteinLayerDeployStack(Stack):
 
         # Define environment variables
         protein_annotation_function_env_vars = {
-            'SPARQL_ENDPOINT': 'https://nyu-neptune-instance-1.cnfpwwtkftli.us-east-1.neptune.amazonaws.com:8182/sparql',
+            'SPARQL_ENDPOINT': config.SPARQL_ENDPOINT,
         }
 
         protein_annotation_function = _lambda.Function(self, 'protein_annotation_function',

@@ -1,7 +1,7 @@
 import aws_cdk as cdk
-from nyu_protein_website_deploy.config import Config
+from nyu_protein_website_deploy.config import config
 from constructs import Construct
-from aws_cdk import (aws_apigateway as apigateway,
+from packages.aws_cdk import (aws_apigateway as apigateway,
                      aws_s3 as s3,
                      aws_neptune as neptune,
                      aws_rds as rds,
@@ -14,7 +14,7 @@ class NyuProteinDatabaseDeployStack(Stack):
         super().__init__(scope, construct_id, **kwargs)
 
 
-        existing_vpc = ec2.Vpc.from_lookup(self, "vpc", vpc_id = Config.VPC_ID)
+        existing_vpc = ec2.Vpc.from_lookup(self, "vpc", vpc_id = config.VPC_ID)
 
         # Define Neptune cluster
         neptune_cluster = neptune.DatabaseCluster(self, "ServerlessDatabase",
@@ -25,6 +25,26 @@ class NyuProteinDatabaseDeployStack(Stack):
                                         max_capacity=5
                                     ))
         
+
+        # neptune_cluster = neptune.CfnDBInstance(self, "MyCfnDBInstance",
+        #     db_instance_class="dbInstanceClass",
+
+        #     # the properties below are optional
+        #     allow_major_version_upgrade=False,
+        #     auto_minor_version_upgrade=False,
+        #     availability_zone="availabilityZone",
+        #     db_cluster_identifier="dbClusterIdentifier",
+        #     db_instance_identifier="dbInstanceIdentifier",
+        #     db_parameter_group_name="dbParameterGroupName",
+        #     db_snapshot_identifier="dbSnapshotIdentifier",
+        #     db_subnet_group_name="dbSubnetGroupName",
+        #     preferred_maintenance_window="preferredMaintenanceWindow",
+        #     tags=[CfnTag(
+        #         key="key",
+        #         value="value"
+        #     )]
+        # )
+
         
         # neptune.DatabaseCluster(self, "NeptuneCluster",
         #     vpc=existing_vpc,
