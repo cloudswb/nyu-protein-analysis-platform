@@ -1,0 +1,4 @@
+packages/*
+nyu-protein-website-deploy/__pycache__
+nyu-protein-website-deploy/packages
+nyu-protein-website-deploy/packages/**
