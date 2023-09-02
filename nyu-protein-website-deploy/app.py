@@ -9,7 +9,7 @@ from nyu_protein_website_deploy.config import config
 from nyu_protein_website_deploy.nyu_protein_vpc_deploy_stack import NyuProteinVpcDeployStack
 
 # from nyu_protein_website_deploy.nyu_protein_agw_deploy_stack import NyuProteinAGWDeployStack
-from nyu_protein_website_deploy.nyu_protein_rds_deploy_stack import NyuProteinRDSDeployStack
+# from nyu_protein_website_deploy.nyu_protein_rds_deploy_stack import NyuProteinRDSDeployStack
 from nyu_protein_website_deploy.nyu_protein_neptune_deploy_stack import NyuProteinNeptuneDeployStack
 
 app = cdk.App()
@@ -22,7 +22,7 @@ env = cdk.Environment(account=config.ACCT_ID, region=config.ACCT_REGION)
 vpc_stack = NyuProteinVpcDeployStack(app, "NyuProteinVpcDeployStack", env = env)
 
 
-rds_stack = NyuProteinRDSDeployStack(app, 'NyuProteinRDSDeployStack', vpc_stack.vpc, env = env)
+# rds_stack = NyuProteinRDSDeployStack(app, 'NyuProteinRDSDeployStack', vpc_stack.vpc, env = env)
 neptune_stack = NyuProteinNeptuneDeployStack(app, 'NyuProteinNeptuneDeployStack', env = env)
 # lambda_with_layer_stack = NyuProteinLambdaDeployStack(app, 'LambdaWithLayerStack', layer=local_layer_stack.pymysql_layer)
 # api_gateway_stack = NyuProteinAGWDeployStack(app, 'ApiGatewayStack', function1=lambda_with_layer_stack.function1, function2=lambda_with_layer_stack.function2)
