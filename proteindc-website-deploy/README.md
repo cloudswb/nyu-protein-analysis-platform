@@ -37,6 +37,12 @@ Once the virtualenv is activated, you can install the required dependencies.
 $ pip install -r requirements.txt
 ```
 
+Now you need to initial the CDK environment
+
+```
+$ cdk bootstrap
+```
+
 At this point you can now synthesize the CloudFormation template for this code.
 
 ```
