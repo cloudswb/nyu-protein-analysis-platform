@@ -28,7 +28,7 @@ else:
     neptune_stack = NyuProteinNeptuneDeployStack(app, 'NyuProteinNeptuneDeployStack', vpc_stack.vpc, env = env)
 neptune_stack.add_dependency(vpc_stack)
 
-neptune_notebook_stack = NyuProteinNeptuneNotebookDeployStack(app, 'NyuProteinNeptuneDeployStack', 
+neptune_notebook_stack = NyuProteinNeptuneNotebookDeployStack(app, 'NyuProteinNeptuneNotebookDeployStack', 
                                                               vpc_stack.vpc, 
                                                               neptune_stack.graph_db_ep, 
                                                               neptune_stack.graph_db_ep_port, 

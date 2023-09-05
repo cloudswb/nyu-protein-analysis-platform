@@ -95,7 +95,7 @@ class NyuProteinNeptuneNotebookDeployStack(Stack):
 
     sagemaker_notebook_role = aws_iam.Role(self, f'{NEPTUNE_DB_IDENTIFIER}-Notebook-ForNeptuneWorkbenchRole',
       role_name=f'AWSNeptuneNotebookRole-{NEPTUNE_DB_IDENTIFIER}-NeptuneNotebook',
-      assumed_by=aws_iam.ServicePrincipal('rds.amazonaws.com'),
+      assumed_by=aws_iam.ServicePrincipal('sagemaker.amazonaws.com'),
       #XXX: use inline_policies to work around https://github.com/aws/aws-cdk/issues/5221
       inline_policies={
         'AWSNeptuneNotebook': sagemaker_notebook_role_policy_doc

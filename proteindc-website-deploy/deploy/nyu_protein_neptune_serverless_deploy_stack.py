@@ -119,3 +119,8 @@ class NyuProteinNeptuneServerlessDeployStack(Stack):
             self, 'neptuneClusterPort',
             value= f'{graph_db.cluster_endpoint.port}',
         )
+
+        cdk.CfnOutput(
+            self, 'neptuneLoadS3Role',
+            value= f'{neptune_load_s3_role.role_arn}',
+        )
