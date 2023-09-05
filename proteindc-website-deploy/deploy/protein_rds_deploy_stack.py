@@ -14,7 +14,7 @@ class NyuProteinRDSDeployStack(Stack):
 
         # Create a security group for the RDS cluster
         db_security_group = ec2.SecurityGroup(
-            self, f'{config.MYSQL_DB_NAME}-MySQL-SG',
+            self, f'{config.MYSQL_DB_IDENTIFIER}-MySQL-SG',
             vpc=existing_vpc,
             description='RDS Security Group',
         )
@@ -31,14 +31,14 @@ class NyuProteinRDSDeployStack(Stack):
 
         # Create a serverless Aurora RDS cluster
         cluster = rds.ServerlessCluster(
-            self, f'{config.MYSQL_DB_NAME}-cluster',
+            self, f'{config.MYSQL_DB_IDENTIFIER}-cluster',
             engine=rds.DatabaseClusterEngine.AURORA_MYSQL,
             cluster_identifier = config.MYSQL_DB_IDENTIFIER, # Replace with your database name
             vpc=existing_vpc,
             vpc_subnets={
                 'subnet_type': ec2.SubnetType.PRIVATE_ISOLATED,
             },
-            default_database_name="proteinog",
+            default_database_name=config.MYSQL_DEFAULT_DB_NAME,
             security_groups=[db_security_group],
             removal_policy=cdk.RemovalPolicy.DESTROY,  # Change as needed
             credentials = rds.Credentials.from_password(config.MYSQL_USER_NAME, rds_password),

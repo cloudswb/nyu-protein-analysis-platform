@@ -33,7 +33,7 @@ class NyuProteinLayerLambdaDeployStack(Stack):
 
         # Define environment variables
         og_query_function_env_vars = {
-            'DB_NAME': config.MYSQL_DB_NAME,
+            'DB_NAME': config.MYSQL_DEFAULT_DB_NAME,
             'PASSWORD': config.MYSQL_PASSWORD,
             'RDS_HOST': rds_ep,
             'USER_NAME': config.MYSQL_USER_NAME,
