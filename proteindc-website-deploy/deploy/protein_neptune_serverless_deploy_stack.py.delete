@@ -16,12 +16,7 @@ class NyuProteinNeptuneServerlessDeployStack(Stack):
     def __init__(self, scope: Construct, construct_id: str, vpc: ec2.Vpc, **kwargs) -> None:
         super().__init__(scope, construct_id, **kwargs)
 
-        vpc_id = config.VPC_ID
-        if (vpc):
-            vpc_id = vpc.vpc_id
-            existing_vpc = vpc
-        else:
-            existing_vpc = ec2.Vpc.from_lookup(self, config.VPC_NAME, vpc_id=vpc_id)
+        existing_vpc = vpc
 
         NEPTUNE_DB_IDENTIFIER = f'{config.NEPTUNE_DB_IDENTIFIER}-SL'
         NEPTUNE_NOTEBOOK_SG = f"{NEPTUNE_DB_IDENTIFIER}-notebook-sg"

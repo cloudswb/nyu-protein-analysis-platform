@@ -17,18 +17,17 @@ from aws_cdk import (
 from deploy.config import config
 
 
-class NyuProteinNeptuneDeployStack(Stack):
+class NyuProteinNeptuneNotebookDeployStack(Stack):
 
-  def __init__(self, scope: Construct, construct_id: str, vpc: aws_ec2.Vpc, **kwargs) -> None:
+  def __init__(self, scope: Construct, construct_id: str, vpc: aws_ec2.Vpc, 
+               graph_db_ep: str, 
+               graph_db_ep_port: str, 
+               attr_cluster_resource_id: str, 
+               **kwargs) -> None:
     super().__init__(scope, construct_id, **kwargs)
 
 
-    vpc_id = config.VPC_ID
-    if (vpc):
-        vpc_id = vpc.vpc_id
-        existing_vpc = vpc
-    else:
-        existing_vpc = aws_ec2.Vpc.from_lookup(self, config.VPC_NAME, vpc_id=vpc_id)
+    existing_vpc = vpc
 
     NEPTUNE_DB_IDENTIFIER = config.NEPTUNE_DB_IDENTIFIER
     NEPTUNE_NOTEBOOK_SG = f"{NEPTUNE_DB_IDENTIFIER}-notebook-sg"
@@ -45,16 +44,16 @@ class NyuProteinNeptuneDeployStack(Stack):
     )
     Tags.of(sg_notebook_graph_db).add('Name', NEPTUNE_NOTEBOOK_SG,)
 
-    sg_graph_db = aws_ec2.SecurityGroup(self, NEPTUNE_SG,
-      vpc=existing_vpc,
-      allow_all_outbound=True,
-      description='security group for neptune db',
-      security_group_name=NEPTUNE_SG,
-    )
-    Tags.of(sg_graph_db).add('Name', NEPTUNE_SG)
+    # sg_graph_db = aws_ec2.SecurityGroup(self, NEPTUNE_SG,
+    #   vpc=existing_vpc,
+    #   allow_all_outbound=True,
+    #   description='security group for neptune db',
+    #   security_group_name=NEPTUNE_SG,
+    # )
+    # Tags.of(sg_graph_db).add('Name', NEPTUNE_SG)
 
-    sg_graph_db.add_ingress_rule(peer=sg_graph_db, connection=aws_ec2.Port.tcp(8182), description=NEPTUNE_SG)
-    sg_graph_db.add_ingress_rule(peer=sg_notebook_graph_db, connection=aws_ec2.Port.tcp(8182), description=NEPTUNE_NOTEBOOK_SG)
+    # sg_graph_db.add_ingress_rule(peer=sg_graph_db, connection=aws_ec2.Port.tcp(8182), description=NEPTUNE_SG)
+    # sg_graph_db.add_ingress_rule(peer=sg_notebook_graph_db, connection=aws_ec2.Port.tcp(8182), description=NEPTUNE_NOTEBOOK_SG)
 
     graph_db_subnet_group = aws_neptune.CfnDBSubnetGroup(self, NEPTUNE_SUBNET_GROUP,
       db_subnet_group_description='subnet group for ProteinDC neptune db',
@@ -72,44 +71,6 @@ class NyuProteinNeptuneDeployStack(Stack):
         ],
     )
 
-    graph_db = aws_neptune.CfnDBCluster(self, f'{NEPTUNE_DB_IDENTIFIER}-Cluster',
-                                        associated_roles=[aws_neptune.CfnDBCluster.DBClusterRoleProperty(
-                                                            role_arn=neptune_load_s3_role.role_arn,
-                                                            feature_name="featureName"
-                                                        )],
-                                        availability_zones=existing_vpc.availability_zones,
-                                        db_subnet_group_name=graph_db_subnet_group.db_subnet_group_name,
-                                        db_cluster_identifier=f'{NEPTUNE_DB_IDENTIFIER}-Cluster',
-                                        backup_retention_period=1,
-                                        preferred_backup_window='22:45-23:15',
-                                        preferred_maintenance_window='sun:18:00-sun:18:30',
-                                        vpc_security_group_ids=[sg_graph_db.security_group_id],
-                                      )
-    graph_db.add_depends_on(graph_db_subnet_group)
-
-    
-    graph_db_instance = aws_neptune.CfnDBInstance(self, f'{NEPTUNE_DB_IDENTIFIER}-Instance',
-      db_instance_class=NEPTUNE_DB_INSTANCE_CLASS,
-      allow_major_version_upgrade=False,
-      auto_minor_version_upgrade=False,
-      availability_zone=existing_vpc.availability_zones[0],
-      db_cluster_identifier=graph_db.db_cluster_identifier,
-      db_instance_identifier=f'{NEPTUNE_DB_IDENTIFIER}-Instance',
-      preferred_maintenance_window='sun:18:00-sun:18:30',
-    )
-    graph_db_instance.add_depends_on(graph_db)
-
-    # graph_db_replica_instance = aws_neptune.CfnDBInstance(self, 'NeptuneTutorialReplicaInstance',
-    #   db_instance_class='db.r5.large',
-    #   allow_major_version_upgrade=False,
-    #   auto_minor_version_upgrade=False,
-    #   availability_zone=vpc.availability_zones[-1],
-    #   db_cluster_identifier=graph_db.db_cluster_identifier,
-    #   db_instance_identifier='neptune-tutorial-replica',
-    #   preferred_maintenance_window='sun:18:00-sun:18:30'
-    # )
-    # graph_db_replica_instance.add_depends_on(graph_db)
-    # graph_db_replica_instance.add_depends_on(graph_db_instance)
 
     sagemaker_notebook_role_policy_doc = aws_iam.PolicyDocument()
     sagemaker_notebook_role_policy_doc.add_statements(aws_iam.PolicyStatement(**{
@@ -123,13 +84,13 @@ class NyuProteinNeptuneDeployStack(Stack):
     sagemaker_notebook_role_policy_doc.add_statements(aws_iam.PolicyStatement(**{
       "effect": aws_iam.Effect.ALLOW,
       "resources": ["arn:aws:neptune-db:{region}:{account}:{cluster_id}/*".format(
-        region=config.ACCT_REGION, account=config.ACCT_ID, cluster_id=graph_db.attr_cluster_resource_id)],
+        region=config.ACCT_REGION, account=config.ACCT_ID, cluster_id=attr_cluster_resource_id)],
       "actions": ["neptune-db:connect"]
     }))
 
     sagemaker_notebook_role = aws_iam.Role(self, f'{NEPTUNE_DB_IDENTIFIER}-Notebook-ForNeptuneWorkbenchRole',
       role_name=f'AWSNeptuneNotebookRole-{NEPTUNE_DB_IDENTIFIER}-NeptuneNotebook',
-      assumed_by=aws_iam.ServicePrincipal('rds.amazonaws.com'),
+      assumed_by=aws_iam.ServicePrincipal('sagemaker.amazonaws.com'),
       #XXX: use inline_policies to work around https://github.com/aws/aws-cdk/issues/5221
       inline_policies={
         'AWSNeptuneNotebook': sagemaker_notebook_role_policy_doc
@@ -160,8 +121,8 @@ mkdir -p ~/SageMaker/ProteinDC
 cp -r /tmp/nyu-protein-analysis-platform/proteindc-website-deploy/deploy/data_init ~/SageMaker/ProteinDC
 
 EOF
-'''.format(NeptuneClusterEndpoint=graph_db.attr_endpoint,
-    NeptuneClusterPort=graph_db.attr_port,
+'''.format(NeptuneClusterEndpoint=graph_db_ep,
+    NeptuneClusterPort=graph_db_ep_port,
     AWS_Region=config.ACCT_REGION)
 
 
@@ -188,16 +149,6 @@ EOF
 
 
     # Output the  instance endpoint
-    cdk.CfnOutput(
-        self, 'neptuneClusterEndpoint',
-        value= graph_db.attr_endpoint,
-    )
-
-    cdk.CfnOutput(
-        self, 'neptuneClusterPort',
-        value= f'{graph_db.attr_port}',
-    )
-
     cdk.CfnOutput(
         self, 'neptuneNotebookInstanceName',
         value= neptune_workbench.notebook_instance_name

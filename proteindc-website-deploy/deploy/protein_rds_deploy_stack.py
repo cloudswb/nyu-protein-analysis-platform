@@ -10,14 +10,7 @@ class NyuProteinRDSDeployStack(Stack):
     def __init__(self, scope: Construct, construct_id: str, vpc: ec2.Vpc, **kwargs) -> None:
         super().__init__(scope, construct_id, **kwargs)
 
-
-        vpc_id = config.VPC_ID
-        if (vpc):
-            vpc_id = vpc.vpc_id
-            existing_vpc = vpc
-        else:
-            existing_vpc = ec2.Vpc.from_lookup(self, config.VPC_NAME, vpc_id=vpc_id)
-        
+        existing_vpc = vpc
 
         # Create a security group for the RDS cluster
         db_security_group = ec2.SecurityGroup(
@@ -55,6 +48,8 @@ class NyuProteinRDSDeployStack(Stack):
                 max_capacity=rds.AuroraCapacityUnit.ACU_32
             )
         )
+
+        self.rds_ep = cluster.cluster_endpoint.hostname
 
         cdk.CfnOutput(
             self, 'rdsClusterEndpoint',

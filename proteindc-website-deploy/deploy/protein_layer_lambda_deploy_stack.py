@@ -10,15 +10,10 @@ from aws_cdk import (aws_apigateway as apigateway,
 
 class NyuProteinLayerLambdaDeployStack(Stack):
     
-    def __init__(self, scope: Construct, construct_id: str,vpc: ec2.Vpc, **kwargs) -> None:
+    def __init__(self, scope: Construct, construct_id: str,vpc: ec2.Vpc, neptune_ep: str, rds_ep: str, **kwargs) -> None:
         super().__init__(scope, construct_id, **kwargs)
 
-        vpc_id = config.VPC_ID
-        if (vpc):
-            vpc_id = vpc.vpc_id
-            existing_vpc = vpc
-        else:
-            existing_vpc = aws_ec2.Vpc.from_lookup(self, config.VPC_NAME, vpc_id=vpc_id)
+        existing_vpc = vpc
 
 
         pymysql_layer = _lambda.LayerVersion(self, 'pymysql',
@@ -33,19 +28,14 @@ class NyuProteinLayerLambdaDeployStack(Stack):
             description='SPARQLWrapper Lambda Layer'
         )
 
-        # Create a VPC
-        # vpc = ec2.Vpc(self, 'MyVpc', max_azs=2)  # Adjust properties as needed
-        # existing_vpc = ec2.Vpc.from_vpc_attributes(self, "ExistingVPC", vpc_id=VPC_ID, availability_zones = ec2.get_available_zones(self))
 
-        # existing_vpc = ec2.Vpc.from_lookup(self, "vpc", vpc_id=config.VPC_ID)
-        
         timeout_seconds = 30
 
         # Define environment variables
         og_query_function_env_vars = {
             'DB_NAME': config.MYSQL_DB_NAME,
             'PASSWORD': config.MYSQL_PASSWORD,
-            'RDS_HOST': config.MYSQL_RDS_HOST,
+            'RDS_HOST': rds_ep,
             'USER_NAME': config.MYSQL_USER_NAME,
         }
 
@@ -63,7 +53,7 @@ class NyuProteinLayerLambdaDeployStack(Stack):
 
         # Define environment variables
         protein_annotation_function_env_vars = {
-            'SPARQL_ENDPOINT': config.SPARQL_ENDPOINT,
+            'SPARQL_ENDPOINT': neptune_ep,
         }
 
         protein_annotation_function = _lambda.Function(self, 'protein_annotation_function',
