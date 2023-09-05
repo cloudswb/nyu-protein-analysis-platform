@@ -11,13 +11,18 @@ class NyuProteinRDSDeployStack(Stack):
         super().__init__(scope, construct_id, **kwargs)
 
 
-        existing_vpc = vpc
+        vpc_id = config.VPC_ID
+        if (vpc):
+            vpc_id = vpc.vpc_id
+            existing_vpc = vpc
+        else:
+            existing_vpc = ec2.Vpc.from_lookup(self, config.VPC_NAME, vpc_id=vpc_id)
         
 
         # Create a security group for the RDS cluster
         db_security_group = ec2.SecurityGroup(
-            self, 'NYU-MySQL-SG',
-            vpc=vpc,
+            self, f'{config.MYSQL_DB_NAME}-MySQL-SG',
+            vpc=existing_vpc,
             description='RDS Security Group',
         )
 
@@ -33,10 +38,10 @@ class NyuProteinRDSDeployStack(Stack):
 
         # Create a serverless Aurora RDS cluster
         cluster = rds.ServerlessCluster(
-            self, '{config.MYSQL_DB_NAME}-cluster',
+            self, f'{config.MYSQL_DB_NAME}-cluster',
             engine=rds.DatabaseClusterEngine.AURORA_MYSQL,
             cluster_identifier = config.MYSQL_DB_IDENTIFIER, # Replace with your database name
-            vpc=vpc,
+            vpc=existing_vpc,
             vpc_subnets={
                 'subnet_type': ec2.SubnetType.PRIVATE_ISOLATED,
             },

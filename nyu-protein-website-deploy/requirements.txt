@@ -1,2 +1,3 @@
-aws-cdk-lib==2.93.0
+aws-cdk.aws-neptune-alpha
+# aws-cdk-lib==2.93.0
 constructs

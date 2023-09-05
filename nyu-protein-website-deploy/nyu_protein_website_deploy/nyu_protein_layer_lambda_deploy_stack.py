@@ -10,8 +10,16 @@ from aws_cdk import (aws_apigateway as apigateway,
 
 class NyuProteinLayerLambdaDeployStack(Stack):
     
-    def __init__(self, scope: Construct, construct_id: str, **kwargs) -> None:
+    def __init__(self, scope: Construct, construct_id: str,vpc: ec2.Vpc, **kwargs) -> None:
         super().__init__(scope, construct_id, **kwargs)
+
+        vpc_id = config.VPC_ID
+        if (vpc):
+            vpc_id = vpc.vpc_id
+            existing_vpc = vpc
+        else:
+            existing_vpc = aws_ec2.Vpc.from_lookup(self, config.VPC_NAME, vpc_id=vpc_id)
+
 
         pymysql_layer = _lambda.LayerVersion(self, 'pymysql',
             code=_lambda.AssetCode.from_asset(path='./layers/pymysql'),
@@ -29,7 +37,7 @@ class NyuProteinLayerLambdaDeployStack(Stack):
         # vpc = ec2.Vpc(self, 'MyVpc', max_azs=2)  # Adjust properties as needed
         # existing_vpc = ec2.Vpc.from_vpc_attributes(self, "ExistingVPC", vpc_id=VPC_ID, availability_zones = ec2.get_available_zones(self))
 
-        existing_vpc = ec2.Vpc.from_lookup(self, "vpc", vpc_id=config.VPC_ID)
+        # existing_vpc = ec2.Vpc.from_lookup(self, "vpc", vpc_id=config.VPC_ID)
         
         timeout_seconds = 30
 

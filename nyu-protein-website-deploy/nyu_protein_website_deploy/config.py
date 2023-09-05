@@ -6,8 +6,9 @@ class config():
     VPC_NAME = 'nyu-vpc'
     VPC_CIDR = '20.0.0.0/16'
     VPC_ID = "vpc-05deee1167bcafa75"
-    WEB_LAMBDA_SG = "sg-0bce7780a97cbceab"
+    IS_SERVERLESS = True
 
+    WEB_LAMBDA_SG = "sg-0bce7780a97cbceab"
     WEB_BUCKET_NAME = "protein1.piyao.com"
     WEB_DOMAIN_NAME = "protein1.piyao.com"
     WEB_ROOT_FILE = "index.html"
@@ -20,5 +21,7 @@ class config():
     MYSQL_RDS_HOST = 'nyu-database.cluster-cnfpwwtkftli.us-east-1.rds.amazonaws.com'
     MYSQL_USER_NAME = 'awsuser'
 
-    NEPTUNE_DB_IDENTIFIER = 'nyu-neptune-2'
+    NEPTUNE_DB_IDENTIFIER = 'proteindc-neptune'
+    NEPTUNE_DB_INSTANCE_CLASS = 'db.r6g.4xlarge'
+    NEPTUNE_NOTEBOOK_INSTANCE_CLASS = 'ml.t3.large'
     SPARQL_ENDPOINT = 'https://nyu-neptune-instance-1.cnfpwwtkftli.us-east-1.neptune.amazonaws.com:8182/sparql'
