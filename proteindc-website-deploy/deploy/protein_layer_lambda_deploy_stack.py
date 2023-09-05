@@ -8,7 +8,7 @@ from aws_cdk import (aws_apigateway as apigateway,
                      Stack,
                      aws_lambda as _lambda)
 
-class NyuProteinLayerLambdaDeployStack(Stack):
+class ProteinDCLayerLambdaDeployStack(Stack):
     
     def __init__(self, scope: Construct, construct_id: str,vpc: ec2.Vpc, neptune_ep: str, rds_ep: str, **kwargs) -> None:
         super().__init__(scope, construct_id, **kwargs)

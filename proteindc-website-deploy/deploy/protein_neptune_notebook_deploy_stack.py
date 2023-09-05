@@ -17,7 +17,7 @@ from aws_cdk import (
 from deploy.config import config
 
 
-class NyuProteinNeptuneNotebookDeployStack(Stack):
+class ProteinDCNeptuneNotebookDeployStack(Stack):
 
   def __init__(self, scope: Construct, construct_id: str, vpc: aws_ec2.Vpc, 
                graph_db_ep: str, 

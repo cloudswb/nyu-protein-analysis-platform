@@ -11,7 +11,7 @@ from aws_cdk import (
 )
 # from packages.aws_solutions_constructs.aws_cloudfront_s3 import CloudFrontToS3
 
-class NyuProteinCloudFrontS3DeployStack(cdk.Stack):
+class ProteinDCCloudFrontS3DeployStack(cdk.Stack):
     def __init__(self, scope: Construct, construct_id: str, **kwargs) -> None:
         super().__init__(scope, construct_id, **kwargs)
 

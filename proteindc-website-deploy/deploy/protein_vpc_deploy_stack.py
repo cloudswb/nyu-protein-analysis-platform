@@ -5,7 +5,7 @@ from constructs import Construct
 from aws_cdk import (aws_ec2 as ec2,
                      Stack,)
 
-class NyuProteinVpcDeployStack(Stack):
+class ProteinDCVpcDeployStack(Stack):
     
     def __init__(self, scope: Construct, construct_id: str, **kwargs) -> None:
         super().__init__(scope, construct_id, **kwargs)
@@ -48,7 +48,7 @@ class NyuProteinVpcDeployStack(Stack):
         )
 
         self.vpc = vpc
-        config.VPC_ID = vpc.vpc_id
+        # config.VPC_ID = vpc.vpc_id
 
         cdk.CfnOutput(
             self, 'VPC ID',

@@ -17,7 +17,7 @@ from aws_cdk import (
 from deploy.config import config
 
 
-class NyuProteinNeptuneDeployStack(Stack):
+class ProteinDCNeptuneDeployStack(Stack):
 
   def __init__(self, scope: Construct, construct_id: str, vpc: aws_ec2.Vpc, **kwargs) -> None:
     super().__init__(scope, construct_id, **kwargs)
