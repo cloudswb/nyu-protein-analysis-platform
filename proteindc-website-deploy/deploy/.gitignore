@@ -1,0 +1,4 @@
+packages/*
+deploy/__pycache__
+deploy/packages
+deploy/packages/**
