@@ -13,7 +13,7 @@ class config():
     WEB_DOMAIN_NAME = "proteinxx.xxx.com" #部署的自有域名 【必须修改】
     WEB_ROOT_FILE = "index.html" #网站默认页面
     WEB_UPLOAD_FOLDER = "../web" #网站在git代码中的位置
-    WEB_CERT_ARN = "" #网站使用的SSL证书ARN信息 【必须修改】
+    WEB_CERT_ARN = "arn:aws:acm:xxxx" #网站使用的SSL证书ARN信息 【必须修改】
 
     MYSQL_DB_IDENTIFIER = 'nyu-mysql' #用于存储网络结构的RDS MySQL数据库的实例名称
     MYSQL_DEFAULT_DB_NAME = 'proteinog' #RDS数据库实例的默认数据库
