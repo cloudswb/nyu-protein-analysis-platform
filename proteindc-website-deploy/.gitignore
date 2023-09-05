@@ -12,3 +12,5 @@ cdk.out
 packages
 packages/
 packages/**
+
+cdk.context.json
