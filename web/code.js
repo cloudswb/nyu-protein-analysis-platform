@@ -1,5 +1,5 @@
 /* global Promise, fetch, window, cytoscape, document, tippy, _ */
-
+import config from './config.js';
 
 searchBtn = document.getElementById('btnSearchProtein');
 
@@ -19,7 +19,8 @@ function proteinSearchClicked(e){
 
 function searchAndLoadNetwork(proteinId, depth)
 {
-  const myRequest = new Request("https://0h95n3oud4.execute-api.us-east-1.amazonaws.com/test/ognetwork?ac="+proteinId+"&deep="+depth, {
+  // https://0h95n3oud4.execute-api.us-east-1.amazonaws.com/test
+  const myRequest = new Request(config.apiEndpoint + "/ognetwork?ac="+proteinId+"&deep="+depth, {
     method: "GET",
     headers: {
       'Content-Type': 'application/json',
