@@ -1,7 +1,7 @@
 import aws_cdk as cdk
 from deploy.config import config
 from constructs import Construct
-from aws_cdk import (
+from packages.aws_cdk import (
     aws_s3 as s3,
     aws_s3_deployment as s3deploy,
     aws_cloudfront as cloudfront,
@@ -29,6 +29,24 @@ class ProteinDCCloudFrontS3DeployStack(cdk.Stack):
 
         # Define Cloudfront CDN that delivers from S3 bucket
         self.cdn = self._create_cdn(access_identity=origin_access_identity)
+
+        cdk.CfnOutput(
+            self, 
+            'Website domain name',
+            value=config.WEB_DOMAIN_NAME,
+        )
+
+        cdk.CfnOutput(
+            self, 
+            'Website cloudfront',
+            value=self.cdn,
+        )
+
+        cdk.CfnOutput(
+            self, 
+            'Website S3',
+            value=self.s3_bucket,
+        )
 
     def _create_hosting_s3_bucket(self):
         """ Returns a S3 instance that serves a static website """
@@ -68,3 +86,5 @@ class ProteinDCCloudFrontS3DeployStack(cdk.Stack):
             default_root_object=config.WEB_ROOT_FILE,
             certificate = acm.Certificate.from_certificate_arn(self, "domainCert", config.WEB_CERT_ARN)
         )
+
+    

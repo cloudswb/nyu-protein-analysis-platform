@@ -1,4 +1,5 @@
 import aws_cdk as cdk
+import time
 from deploy.config import config
 
 from constructs import Construct
@@ -49,6 +50,8 @@ class ProteinDCVpcDeployStack(Stack):
 
         self.vpc = vpc
         # config.VPC_ID = vpc.vpc_id
+
+        time.sleep(60)
 
         cdk.CfnOutput(
             self, 'VPC ID',
