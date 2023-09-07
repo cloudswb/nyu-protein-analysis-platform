@@ -2,7 +2,7 @@ import aws_cdk as cdk
 from deploy.config import config
 
 from constructs import Construct
-from aws_cdk import (aws_apigateway as apigateway,
+from packages.aws_cdk import (aws_apigateway as apigateway,
                      aws_s3 as s3,
                      aws_ec2 as ec2,
                      Stack,
@@ -78,21 +78,34 @@ class ProteinDCLayerLambdaDeployStack(Stack):
         resource2 = api.root.add_resource('protein_annotation_function')
         resource2.add_method('GET', apigateway.LambdaIntegration(protein_annotation_function))
 
-        self.api_url = api.url
-        self.update_website_config()
 
-    
-    def update_website_config(self):
-
+        # Start to update website URL info
+        api_url = api.url
         file_path = '../web/config.js'
-        api_url = self.api_url
+
+        js_config_content = {
+            "apiEndpointUrl": api_url
+        }
+
+        js_config_content_string = json.dumps(js_config_content, indent=2)
+
         # Open the file in append mode ('a')
         with open(file_path, 'w') as file:
             file.write("\n")  # Add a newline before appending
-            file.write(f"""const config = {{
-                apiEndpoint: '{api_url}'
-            }};""")
+            file.write(f"const config ={js_config_content_string}")
             file.write("\n") 
-            file.write("export default config;") 
+            file.write("export default config;")
 
         print(f'Content has been appended to the file "{file_path}".')
+
+        cdk.CfnOutput(
+            self, 
+            'Api URL',
+            value=api.url,
+        )
+
+        cdk.CfnOutput(
+            self, 
+            'Api Domain Name',
+            value=api.domain_name,
+        )
