@@ -32,7 +32,9 @@ class ProteinDCCloudFrontS3DeployStack(cdk.Stack):
 
         # Define Cloudfront CDN that delivers from S3 bucket
         self.cdn = self._create_cdn(access_identity=origin_access_identity)
-        self.region = Stack.of(self).region
+        
+        self._update_website()
+
         cdk.CfnOutput(
             self, 
             'Website Domain Name',
@@ -94,7 +96,7 @@ class ProteinDCCloudFrontS3DeployStack(cdk.Stack):
     def _update_website(self):
         # Create a Boto3 client for API Gateway
         
-        apigateway_client = boto3.client('apigateway', region_name=self.region)
+        apigateway_client = boto3.client('apigateway', region_name=config.ACCT_REGION)
         stage_name = 'prod'
 
         # Retrieve the API Gateway details
@@ -114,12 +116,8 @@ class ProteinDCCloudFrontS3DeployStack(cdk.Stack):
                 stageName=stage_name
             )
             stage_url = stage_response["stageName"]
-
             
-            api_url = stage_url
-
-            # 
-            # api_url = f"https://{output.value}.execute-api.{region}.amazonaws.com/prod/"
+            api_url = f"https://{api_id}.execute-api.{region}.amazonaws.com/{stage_url}/"
 
             print(f'api_url: {api_url}')
 
