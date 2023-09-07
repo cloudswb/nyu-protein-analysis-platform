@@ -80,7 +80,7 @@ class ProteinDCLayerLambdaDeployStack(Stack):
 
 
         # Start to update website URL info
-        api_url = api.url
+        api_url = api.deployment_stage.rest_api
         print(f'api_url: {api_url}')
         print(f'api.url: {api.url}')
         print(f'api.domain_name: {api.domain_name}')
