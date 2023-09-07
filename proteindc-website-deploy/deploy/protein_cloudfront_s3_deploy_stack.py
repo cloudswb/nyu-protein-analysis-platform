@@ -1,7 +1,7 @@
 import aws_cdk as cdk
 from deploy.config import config
 from constructs import Construct
-from packages.aws_cdk import (
+from aws_cdk import (
     aws_s3 as s3,
     aws_s3_deployment as s3deploy,
     aws_cloudfront as cloudfront,
