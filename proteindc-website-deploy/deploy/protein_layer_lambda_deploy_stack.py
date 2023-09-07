@@ -2,7 +2,7 @@ import aws_cdk as cdk
 from deploy.config import config
 
 from constructs import Construct
-from aws_cdk import (aws_apigateway as apigateway,
+from packages.aws_cdk import (aws_apigateway as apigateway,
                             aws_ec2 as ec2,
                             Stack,
                             aws_lambda as _lambda)
@@ -66,7 +66,14 @@ class ProteinDCLayerLambdaDeployStack(Stack):
         )
 
         # Create the REST API
-        api = apigateway.RestApi(self, config.AGW_NAME, rest_api_name='ProteinDataApi')
+        api = apigateway.RestApi(self, 
+                                 config.AGW_NAME, 
+                                 rest_api_name='ProteinDataApi',
+                                 default_cors_preflight_options=apigateway.CorsOptions(
+                                                                    allow_origins=apigateway.Cors.ALL_ORIGINS,
+                                                                    allow_methods=apigateway.Cors.ALL_METHODS,
+                                                                )
+                                 )
 
         # Create resources and methods for each Lambda function
         resource1 = api.root.add_resource('og_query_function')
