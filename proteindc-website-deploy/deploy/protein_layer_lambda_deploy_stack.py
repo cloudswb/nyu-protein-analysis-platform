@@ -2,7 +2,7 @@ import aws_cdk as cdk
 from deploy.config import config
 
 from constructs import Construct
-from packages.aws_cdk import (aws_apigateway as apigateway,
+from aws_cdk import (aws_apigateway as apigateway,
                               Stage,
                             aws_s3 as s3,
                             aws_ec2 as ec2,
@@ -80,13 +80,18 @@ class ProteinDCLayerLambdaDeployStack(Stack):
         resource2.add_method('GET', apigateway.LambdaIntegration(protein_annotation_function))
 
 
+        output = cdk.CfnOutput(
+            self, 
+            'Api URL',
+            value=api.url,
+        )
+
         # Start to update website URL info
 
-        api_stage = Stage(self, "$default", deployment=api.latest_deployment)
+        # api_stage = Stage(self, "prod", deployment=api.latest_deployment)
         region = Stack.of(self).region
-        stage_name = api_stage.stage_name
 
-        api_url = f"https://{api.rest_api_id}.execute-api.{region}.amazonaws.com/{stage_name}/"
+        api_url = f"https://{output.value}.execute-api.{region}.amazonaws.com/prod/"
 
         print(f'api_url: {api_url}')
 
@@ -106,15 +111,3 @@ class ProteinDCLayerLambdaDeployStack(Stack):
             file.write("export default config;")
 
         print(f'Content has been appended to the file "{file_path}".')
-
-        cdk.CfnOutput(
-            self, 
-            'Api URL',
-            value=api_url,
-        )
-
-        cdk.CfnOutput(
-            self, 
-            'Api Domain Name',
-            value=api.domain_name,
-        )
