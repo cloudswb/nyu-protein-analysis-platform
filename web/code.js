@@ -1,6 +1,4 @@
 /* global Promise, fetch, window, cytoscape, document, tippy, _ */
-import config from './config.js';
-
 searchBtn = document.getElementById('btnSearchProtein');
 
 function proteinSearchClicked(e){
