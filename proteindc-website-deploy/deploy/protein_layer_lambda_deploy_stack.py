@@ -3,13 +3,9 @@ from deploy.config import config
 
 from constructs import Construct
 from aws_cdk import (aws_apigateway as apigateway,
-                              Stage,
-                            aws_s3 as s3,
                             aws_ec2 as ec2,
                             Stack,
                             aws_lambda as _lambda)
-import subprocess
-import json
 class ProteinDCLayerLambdaDeployStack(Stack):
     
     def __init__(self, scope: Construct, construct_id: str,vpc: ec2.Vpc, neptune_ep: str, rds_ep: str, **kwargs) -> None:
@@ -70,7 +66,7 @@ class ProteinDCLayerLambdaDeployStack(Stack):
         )
 
         # Create the REST API
-        api = apigateway.RestApi(self, 'ProteinDataApi', rest_api_name='ProteinDataApi')
+        api = apigateway.RestApi(self, config.AGW_NAME, rest_api_name='ProteinDataApi')
 
         # Create resources and methods for each Lambda function
         resource1 = api.root.add_resource('og_query_function')
@@ -80,34 +76,8 @@ class ProteinDCLayerLambdaDeployStack(Stack):
         resource2.add_method('GET', apigateway.LambdaIntegration(protein_annotation_function))
 
 
-        output = cdk.CfnOutput(
+        cdk.CfnOutput(
             self, 
-            'Api URL',
+            'API URL',
             value=api.url,
         )
-
-        # Start to update website URL info
-
-        # api_stage = Stage(self, "prod", deployment=api.latest_deployment)
-        region = Stack.of(self).region
-
-        api_url = f"https://{output.value}.execute-api.{region}.amazonaws.com/prod/"
-
-        print(f'api_url: {api_url}')
-
-        file_path = '../web/config.js'
-
-        js_config_content = {
-            "apiEndpointUrl": api_url
-        }
-
-        js_config_content_string = json.dumps(js_config_content, indent=2)
-
-        # Open the file in append mode ('a')
-        with open(file_path, 'w') as file:
-            file.write("\n")  # Add a newline before appending
-            file.write(f"const config ={js_config_content_string}")
-            file.write("\n") 
-            file.write("export default config;")
-
-        print(f'Content has been appended to the file "{file_path}".')

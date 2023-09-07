@@ -8,6 +8,7 @@ class config():
     VPC_NAME = 'nyu-vpc' #新建VPC的名称
     VPC_CIDR = '20.0.0.0/16' #新建VPC的IP网段
     
+    AGW_NAME = 'ProteinDataApi'
 
     WEB_BUCKET_NAME = "proteinxxx.xxx.com" #存储前端网页代码的存储桶名称 【必须修改】
     WEB_DOMAIN_NAME = "proteinxx.xxx.com" #部署的自有域名 【必须修改】

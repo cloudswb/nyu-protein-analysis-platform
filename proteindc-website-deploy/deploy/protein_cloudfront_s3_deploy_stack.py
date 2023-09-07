@@ -1,4 +1,6 @@
 import aws_cdk as cdk
+import boto3
+import json
 from deploy.config import config
 from constructs import Construct
 from aws_cdk import (
@@ -8,6 +10,7 @@ from aws_cdk import (
     aws_cloudfront_origins as origins,
     aws_certificatemanager as acm,
     RemovalPolicy as removalPolicy,
+    Stack,
 )
 # from packages.aws_solutions_constructs.aws_cloudfront_s3 import CloudFrontToS3
 
@@ -29,7 +32,7 @@ class ProteinDCCloudFrontS3DeployStack(cdk.Stack):
 
         # Define Cloudfront CDN that delivers from S3 bucket
         self.cdn = self._create_cdn(access_identity=origin_access_identity)
-
+        self.region = Stack.of(self).region
         cdk.CfnOutput(
             self, 
             'Website Domain Name',
@@ -86,5 +89,59 @@ class ProteinDCCloudFrontS3DeployStack(cdk.Stack):
             default_root_object=config.WEB_ROOT_FILE,
             certificate = acm.Certificate.from_certificate_arn(self, "domainCert", config.WEB_CERT_ARN)
         )
+
+    
+    def _update_website(self):
+        # Create a Boto3 client for API Gateway
+        
+        apigateway_client = boto3.client('apigateway', region_name=self.region)
+        stage_name = 'prod'
+
+        # Retrieve the API Gateway details
+        api_response = apigateway_client.get_rest_apis()
+        api_id = None
+
+        # Find the API Gateway by name
+        for api in api_response["items"]:
+            if api["name"] == config.AGW_NAME:
+                api_id = api["id"]
+                break
+
+        if api_id:
+            # Get the stage information
+            stage_response = apigateway_client.get_stage(
+                restApiId=api_id,
+                stageName=stage_name
+            )
+            stage_url = stage_response["stageName"]
+
+            
+            api_url = stage_url
+
+            # 
+            # api_url = f"https://{output.value}.execute-api.{region}.amazonaws.com/prod/"
+
+            print(f'api_url: {api_url}')
+
+            file_path = '../web/config.js'
+
+            js_config_content = {
+                "apiEndpointUrl": api_url
+            }
+
+            js_config_content_string = json.dumps(js_config_content, indent=2)
+
+            # Open the file in append mode ('a')
+            with open(file_path, 'w') as file:
+                file.write("\n")  # Add a newline before appending
+                file.write(f"const config ={js_config_content_string}")
+                file.write("\n") 
+                file.write("export default config;")
+
+            print(f'Content has been appended to the file "{file_path}".')
+
+            print(f"API Gateway Stage URL: {stage_url}")
+        else:
+            print("API Gateway not found.")
 
     
