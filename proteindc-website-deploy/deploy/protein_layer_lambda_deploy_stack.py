@@ -2,13 +2,14 @@ import aws_cdk as cdk
 from deploy.config import config
 
 from constructs import Construct
-from packages.aws_cdk import (aws_apigateway as apigateway,
+from aws_cdk import (aws_apigateway as apigateway,
                      aws_s3 as s3,
                      aws_ec2 as ec2,
                      Stack,
                      aws_lambda as _lambda)
 import subprocess
 import json
+import JSON
 class ProteinDCLayerLambdaDeployStack(Stack):
     
     def __init__(self, scope: Construct, construct_id: str,vpc: ec2.Vpc, neptune_ep: str, rds_ep: str, **kwargs) -> None:
@@ -83,27 +84,16 @@ class ProteinDCLayerLambdaDeployStack(Stack):
 
     
     def update_website_config(self):
-        # Define the new configuration values in Python
-        new_config = {
-            "apiEndpoint": self.api_url,
-        }
+        
+        file_path = '../web/config.js'
 
-        # Convert the Python dictionary to a JSON string
-        new_config_json = json.dumps(new_config)
+        # Open the file in append mode ('a')
+        with open(file_path, 'a') as file:
+            file.write("\n")  # Add a newline before appending
+            file.write("""const config = {
+                apiEndpoint: '{self.api_url}'
+            };""")
+            file.write("\n") 
+            file.write("export default config;") 
 
-        # Use Node.js to update the configuration file
-        node_script = f"""
-        const fs = require('fs');
-
-        const newConfig = {new_config_json};
-        const configFilePath = '../web/config.js';
-
-        fs.writeFileSync(configFilePath, `const config = ${JSON.stringify(newConfig, null, 2)};\nexport default config;`);
-
-        console.log('Configuration file updated.');
-        """
-
-        # Execute the Node.js script from Python
-        subprocess.run(['node', '-e', node_script], shell=False, check=True)
-
-        print('Configuration values updated.')
+        print(f'Content has been appended to the file "{file_path}".')
