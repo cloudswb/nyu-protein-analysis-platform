@@ -3,10 +3,11 @@ from deploy.config import config
 
 from constructs import Construct
 from packages.aws_cdk import (aws_apigateway as apigateway,
-                     aws_s3 as s3,
-                     aws_ec2 as ec2,
-                     Stack,
-                     aws_lambda as _lambda)
+                              Stage,
+                            aws_s3 as s3,
+                            aws_ec2 as ec2,
+                            Stack,
+                            aws_lambda as _lambda)
 import subprocess
 import json
 class ProteinDCLayerLambdaDeployStack(Stack):
@@ -80,14 +81,14 @@ class ProteinDCLayerLambdaDeployStack(Stack):
 
 
         # Start to update website URL info
-        api_url = api.deployment_stage.rest_api
+
+        api_stage = Stage(self, "$default", deployment=api.latest_deployment)
+        region = Stack.of(self).region
+        stage_name = api_stage.stage_name
+
+        api_url = f"https://{api.rest_api_id}.execute-api.{region}.amazonaws.com/{stage_name}/"
+
         print(f'api_url: {api_url}')
-        print(f'api.url: {api.url}')
-        print(f'api.domain_name: {api.domain_name}')
-        print(f'api.to_string: {api.to_string()}')
-        print(f'api.deployment_stage: {api.deployment_stage}')
-        print(f'api.env: {api.env}')
-        print(f'api.url_for_path: {api.url_for_path()}')
 
         file_path = '../web/config.js'
 
@@ -109,7 +110,7 @@ class ProteinDCLayerLambdaDeployStack(Stack):
         cdk.CfnOutput(
             self, 
             'Api URL',
-            value=api.url,
+            value=api_url,
         )
 
         cdk.CfnOutput(
