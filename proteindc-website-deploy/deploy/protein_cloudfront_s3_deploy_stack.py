@@ -130,7 +130,7 @@ class ProteinDCCloudFrontS3DeployStack(cdk.Stack):
             # Open the file in append mode ('a')
             with open(file_path, 'w') as file:
                 file.write("\n")  # Add a newline before appending
-                file.write(f"const config ={js_config_content_string}")
+                file.write(f"const agw_config ={js_config_content_string}")
                 file.write("\n")
 
             print(f'Content has been appended to the file "{file_path}".')
