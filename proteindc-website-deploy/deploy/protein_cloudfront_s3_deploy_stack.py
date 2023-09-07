@@ -117,7 +117,7 @@ class ProteinDCCloudFrontS3DeployStack(cdk.Stack):
             )
             stage_url = stage_response["stageName"]
             
-            api_url = f"https://{api_id}.execute-api.{region}.amazonaws.com/{stage_url}/"
+            api_url = f"https://{api_id}.execute-api.{config.ACCT_REGION}.amazonaws.com/{stage_url}/"
 
             print(f'api_url: {api_url}')
 
@@ -138,7 +138,7 @@ class ProteinDCCloudFrontS3DeployStack(cdk.Stack):
 
             print(f'Content has been appended to the file "{file_path}".')
 
-            print(f"API Gateway Stage URL: {stage_url}")
+            # print(f"API Gateway Stage URL: {stage_url}")
         else:
             print("API Gateway not found.")
 
