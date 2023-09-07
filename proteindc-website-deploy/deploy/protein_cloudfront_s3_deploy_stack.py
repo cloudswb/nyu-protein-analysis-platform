@@ -32,19 +32,19 @@ class ProteinDCCloudFrontS3DeployStack(cdk.Stack):
 
         cdk.CfnOutput(
             self, 
-            'Website domain name',
-            value=self.cdn.domain_name,
+            'Website Domain Name',
+            value=config.WEB_DOMAIN_NAME,
         )
 
         cdk.CfnOutput(
             self, 
-            'Website cloudfront',
+            'Website Cloudfront Distribution Domain Name',
             value=self.cdn.distribution_domain_name,
         )
 
         cdk.CfnOutput(
             self, 
-            'Website S3',
+            'Website S3 Bucket Name',
             value=self.s3_bucket.bucket_name,
         )
 

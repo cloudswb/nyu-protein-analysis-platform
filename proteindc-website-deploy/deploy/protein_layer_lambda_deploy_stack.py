@@ -85,13 +85,13 @@ class ProteinDCLayerLambdaDeployStack(Stack):
     def update_website_config(self):
 
         file_path = '../web/config.js'
-
+        api_url = self.api_url
         # Open the file in append mode ('a')
-        with open(file_path, 'a') as file:
+        with open(file_path, 'w') as file:
             file.write("\n")  # Add a newline before appending
-            file.write("""const config = {
-                apiEndpoint: '{self.api_url}'
-            };""")
+            file.write(f"""const config = {{
+                apiEndpoint: '{api_url}'
+            }};""")
             file.write("\n") 
             file.write("export default config;") 
 
