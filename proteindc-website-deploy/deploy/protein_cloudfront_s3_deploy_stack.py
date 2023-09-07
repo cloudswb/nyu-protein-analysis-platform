@@ -120,7 +120,7 @@ class ProteinDCCloudFrontS3DeployStack(cdk.Stack):
             api_url = f"https://{api_id}.execute-api.{config.ACCT_REGION}.amazonaws.com/{stage_url}/"
 
             print(f'api_url: {api_url}')
-            file_path = '../web/code.js'
+            file_path = '../web/config.js'
             js_config_content = {
                 "apiEndpointUrl": api_url
             }
@@ -128,11 +128,10 @@ class ProteinDCCloudFrontS3DeployStack(cdk.Stack):
             js_config_content_string = json.dumps(js_config_content, indent=2)
 
             # Open the file in append mode ('a')
-            with open(file_path, 'a') as file:
+            with open(file_path, 'w') as file:
                 file.write("\n")  # Add a newline before appending
                 file.write(f"const config ={js_config_content_string}")
-                file.write("\n") 
-                # file.write("export default config;")
+                file.write("\n")
 
             print(f'Content has been appended to the file "{file_path}".')
         else:

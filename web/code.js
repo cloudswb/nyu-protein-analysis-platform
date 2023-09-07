@@ -17,8 +17,7 @@ function proteinSearchClicked(e){
 
 function searchAndLoadNetwork(proteinId, depth)
 {
-  // https://0h95n3oud4.execute-api.us-east-1.amazonaws.com/test
-  const myRequest = new Request(config.apiEndpoint + "/ognetwork?ac="+proteinId+"&deep="+depth, {
+  const myRequest = new Request(agw_config.apiEndpointUrl + "ognetwork?ac="+proteinId+"&deep="+depth, {
     method: "GET",
     headers: {
       'Content-Type': 'application/json',
