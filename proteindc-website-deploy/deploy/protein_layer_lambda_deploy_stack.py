@@ -9,7 +9,6 @@ from aws_cdk import (aws_apigateway as apigateway,
                      aws_lambda as _lambda)
 import subprocess
 import json
-import JSON
 class ProteinDCLayerLambdaDeployStack(Stack):
     
     def __init__(self, scope: Construct, construct_id: str,vpc: ec2.Vpc, neptune_ep: str, rds_ep: str, **kwargs) -> None:
@@ -84,7 +83,7 @@ class ProteinDCLayerLambdaDeployStack(Stack):
 
     
     def update_website_config(self):
-        
+
         file_path = '../web/config.js'
 
         # Open the file in append mode ('a')
