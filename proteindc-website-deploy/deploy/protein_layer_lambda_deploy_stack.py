@@ -81,6 +81,14 @@ class ProteinDCLayerLambdaDeployStack(Stack):
 
         # Start to update website URL info
         api_url = api.url
+        print(f'api_url: {api_url}')
+        print(f'api.url: {api.url}')
+        print(f'api.domain_name: {api.domain_name}')
+        print(f'api.to_string: {api.to_string()}')
+        print(f'api.deployment_stage: {api.deployment_stage}')
+        print(f'api.env: {api.env}')
+        print(f'api.url_for_path: {api.url_for_path()}')
+
         file_path = '../web/config.js'
 
         js_config_content = {
