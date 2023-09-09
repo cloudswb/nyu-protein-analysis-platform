@@ -12,7 +12,8 @@ from deploy.protein_neptune_serverless_deploy_stack import ProteinDCNeptuneServe
 from deploy.protein_neptune_notebook_deploy_stack import ProteinDCNeptuneNotebookDeployStack
 
 
-from deploy.protein_cloudfront_s3_deploy_stack import ProteinDCCloudFrontS3DeployStack
+from deploy.protein_website_cloudfront_deploy_stack import ProteinDCWebsiteCloudFrontDeployStack
+from deploy.protein_website_s3_deploy_stack import ProteinDCWebsiteS3DeployStack
 from deploy.protein_layer_lambda_deploy_stack import ProteinDCLayerLambdaDeployStack
 
 app = cdk.App()
@@ -38,10 +39,13 @@ neptune_notebook_stack.add_dependency(neptune_stack)
 rds_stack = ProteinDCRDSDeployStack(app, 'ProteinDCRDSDeployStack', vpc_stack.vpc, env = env)
 rds_stack.add_dependency(neptune_notebook_stack)
 
-website_stack = ProteinDCCloudFrontS3DeployStack(app, "ProteinDCWebsiteDeployStack", env = env)
-website_stack.add_dependency(rds_stack)
+website_s3_stack = ProteinDCWebsiteS3DeployStack(app, "ProteinDCWebsiteS3DeployStack", env = env)
+website_s3_stack.add_dependency(rds_stack)
+
+website_cf_stack = ProteinDCWebsiteCloudFrontDeployStack(app, "ProteinDCWebsiteCloudFrontDeployStack", website_s3_stack.origin_access_identity,env = env)
+website_cf_stack.add_dependency(website_s3_stack)
 
 lambda_stack = ProteinDCLayerLambdaDeployStack(app, 'ProteinDCLayerLambdaAGWDeployStack',vpc_stack.vpc, neptune_stack.graph_db_ep,rds_stack.rds_ep, env = env)
-lambda_stack.add_dependency(website_stack)
+lambda_stack.add_dependency(website_cf_stack)
 
 app.synth()

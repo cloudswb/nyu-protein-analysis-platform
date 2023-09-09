@@ -3,7 +3,7 @@ import boto3
 import json
 from deploy.config import config
 from constructs import Construct
-from aws_cdk import (
+from packages.aws_cdk import (
     aws_s3 as s3,
     aws_s3_deployment as s3deploy,
     aws_cloudfront as cloudfront,
@@ -13,9 +13,11 @@ from aws_cdk import (
     Stack,
 )
 
-class ProteinDCCloudFrontS3DeployStack(cdk.Stack):
+class ProteinDCWebsiteS3DeployStack(cdk.Stack):
     def __init__(self, scope: Construct, construct_id: str, **kwargs) -> None:
         super().__init__(scope, construct_id, **kwargs)
+
+        self._update_website()
 
         # Define a S3 bucket that contains a static website
         self.s3_bucket = self._create_hosting_s3_bucket()
@@ -25,26 +27,10 @@ class ProteinDCCloudFrontS3DeployStack(cdk.Stack):
             self,
             'cdkTestOriginAccessIdentity',
         )
+        self.origin_access_identity = origin_access_identity
 
         # Allows Origin Access Control to read from S3
         self.s3_bucket.grant_read(origin_access_identity)
-
-        # Define Cloudfront CDN that delivers from S3 bucket
-        self.cdn = self._create_cdn(access_identity=origin_access_identity)
-        
-        self._update_website()
-
-        cdk.CfnOutput(
-            self, 
-            'Website Domain Name',
-            value=config.WEB_DOMAIN_NAME,
-        )
-
-        cdk.CfnOutput(
-            self, 
-            'Website Cloudfront Distribution Domain Name',
-            value=self.cdn.distribution_domain_name,
-        )
 
         cdk.CfnOutput(
             self, 
@@ -74,22 +60,6 @@ class ProteinDCCloudFrontS3DeployStack(cdk.Stack):
             retain_on_delete=False,
         )
         return website_bucket
-
-    def _create_cdn(self, access_identity):
-        """ Returns a CDN that delivers from a S3 bucket """
-        return cloudfront.Distribution(
-            self,
-            'ProteinDataWebsiteDist',
-            default_behavior=cloudfront.BehaviorOptions(
-                origin=origins.S3Origin(
-                    self.s3_bucket,
-                    origin_access_identity=access_identity,
-                ),
-            ),
-            domain_names = [config.WEB_DOMAIN_NAME],
-            default_root_object=config.WEB_ROOT_FILE,
-            certificate = acm.Certificate.from_certificate_arn(self, "domainCert", config.WEB_CERT_ARN)
-        )
 
     
     def _update_website(self):
