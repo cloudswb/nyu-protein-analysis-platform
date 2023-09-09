@@ -2,6 +2,7 @@
 # vim: tabstop=2 shiftwidth=2 softtabstop=2 expandtab
 
 import os
+import time
 from constructs import Construct
 import aws_cdk as cdk
 from aws_cdk import (
@@ -26,7 +27,7 @@ class ProteinDCNeptuneNotebookDeployStack(Stack):
                **kwargs) -> None:
     super().__init__(scope, construct_id, **kwargs)
 
-
+    time.sleep(60)
     existing_vpc = vpc
 
     NEPTUNE_DB_IDENTIFIER = config.NEPTUNE_DB_IDENTIFIER

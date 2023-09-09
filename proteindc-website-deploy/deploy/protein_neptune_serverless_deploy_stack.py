@@ -1,4 +1,5 @@
 import aws_cdk as cdk
+import time
 from deploy.config import config
 from constructs import Construct
 from aws_cdk import (aws_neptune_alpha as neptune_alpha,
@@ -14,6 +15,7 @@ class ProteinDCNeptuneServerlessDeployStack(Stack):
     def __init__(self, scope: Construct, construct_id: str, vpc: ec2.Vpc, **kwargs) -> None:
         super().__init__(scope, construct_id, **kwargs)
 
+        time.sleep(60)
         existing_vpc = vpc
 
         NEPTUNE_DB_IDENTIFIER = f'{config.NEPTUNE_DB_IDENTIFIER}-serverless'

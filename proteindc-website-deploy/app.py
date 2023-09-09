@@ -22,6 +22,7 @@ env = cdk.Environment(account=config.ACCT_ID, region=config.ACCT_REGION)
 
 
 vpc_stack = ProteinDCVpcDeployStack(app, "ProteinDCVpcDeployStack", env = env)
+
 if(config.IS_NEPTUNE_SERVERLESS):
     neptune_stack = ProteinDCNeptuneServerlessDeployStack(app, 'ProteinDCNeptuneServerlessDeployStack', vpc_stack.vpc, env = env)
 else:

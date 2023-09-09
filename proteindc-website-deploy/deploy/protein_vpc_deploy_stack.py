@@ -51,7 +51,7 @@ class ProteinDCVpcDeployStack(Stack):
         self.vpc = vpc
         # config.VPC_ID = vpc.vpc_id
 
-        time.sleep(60)
+        time.sleep(30)
 
         cdk.CfnOutput(
             self, 'VPC ID',
