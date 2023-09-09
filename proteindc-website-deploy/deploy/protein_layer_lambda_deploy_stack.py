@@ -2,7 +2,7 @@ import aws_cdk as cdk
 from deploy.config import config
 
 from constructs import Construct
-from packages.aws_cdk import (aws_apigateway as apigateway,
+from aws_cdk import (aws_apigateway as apigateway,
                             aws_ec2 as ec2,
                             Stack,
                             aws_lambda as _lambda)
