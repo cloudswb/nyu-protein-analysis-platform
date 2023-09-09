@@ -9,8 +9,6 @@ from aws_cdk import (aws_neptune_alpha as neptune_alpha,
                      Tags,
                      Fn)
 
-# from packages.aws_cdk import aws_neptune_alpha as neptune
-
 class ProteinDCNeptuneServerlessDeployStack(Stack):
 
     def __init__(self, scope: Construct, construct_id: str, vpc: ec2.Vpc, **kwargs) -> None:

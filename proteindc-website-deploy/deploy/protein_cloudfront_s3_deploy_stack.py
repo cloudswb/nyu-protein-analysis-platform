@@ -12,7 +12,6 @@ from aws_cdk import (
     RemovalPolicy as removalPolicy,
     Stack,
 )
-# from packages.aws_solutions_constructs.aws_cloudfront_s3 import CloudFrontToS3
 
 class ProteinDCCloudFrontS3DeployStack(cdk.Stack):
     def __init__(self, scope: Construct, construct_id: str, **kwargs) -> None:
