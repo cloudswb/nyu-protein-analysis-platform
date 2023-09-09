@@ -102,7 +102,7 @@ class ProteinDCWebsiteS3DeployStack(cdk.Stack):
                 file.write(f"const agw_config ={js_config_content_string}")
                 file.write("\n")
 
-            print(f'Content has been appended to the file "{file_path}".')
+            print(f'Content has been appended to the file "{file_path}", with content: {js_config_content_string}')
         else:
             print("API Gateway not found.")
 
