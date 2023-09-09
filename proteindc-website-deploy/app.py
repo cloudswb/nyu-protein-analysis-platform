@@ -45,7 +45,7 @@ lambda_stack.add_dependency(rds_stack)
 website_s3_stack = ProteinDCWebsiteS3DeployStack(app, "ProteinDCWebsiteS3DeployStack", env = env)
 website_s3_stack.add_dependency(lambda_stack)
 
-website_cf_stack = ProteinDCWebsiteCloudFrontDeployStack(app, "ProteinDCWebsiteCloudFrontDeployStack", website_s3_stack.origin_access_identity,env = env)
+website_cf_stack = ProteinDCWebsiteCloudFrontDeployStack(app, "ProteinDCWebsiteCloudFrontDeployStack", website_s3_stack.origin_access_identity, website_s3_stack.s3_bucket, env = env)
 website_cf_stack.add_dependency(website_s3_stack)
 
 
