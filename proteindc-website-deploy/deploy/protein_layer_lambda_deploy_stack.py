@@ -72,28 +72,22 @@ class ProteinDCLayerLambdaDeployStack(Stack):
                                  default_cors_preflight_options=apigateway.CorsOptions(
                                                                     allow_origins=apigateway.Cors.ALL_ORIGINS,
                                                                     allow_methods=apigateway.Cors.ALL_METHODS,
-                                                                )
+                                                                    allow_headers=[
+                                                                                    'Content-Type',
+                                                                                    'X-Amz-Date',
+                                                                                    'Authorization',
+                                                                                    'X-Api-Key',
+                                                                                    ],
+                                                                ),
                                  )
 
         # Create resources and methods for each Lambda function
         resource1 = api.root.add_resource('og_query_function')
         resource1.add_method('GET', apigateway.LambdaIntegration(og_query_function))
-        # Enable CORS for the API Gateway
-        resource1.add_cors_preflight(
-            allow_origins=apigateway.Cors.ALL_ORIGINS,
-            allow_methods=apigateway.Cors.ALL_METHODS,
-        )
-
 
         # Create resources and methods for each Lambda function
         resource2 = api.root.add_resource('protein_annotation_function')
         resource2.add_method('GET', apigateway.LambdaIntegration(protein_annotation_function))
-        # Enable CORS for the API Gateway
-        resource2.add_cors_preflight(
-            allow_origins=apigateway.Cors.ALL_ORIGINS,
-            allow_methods=apigateway.Cors.ALL_METHODS,
-        )
-
 
         cdk.CfnOutput(
             self, 
