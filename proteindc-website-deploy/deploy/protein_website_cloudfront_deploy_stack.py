@@ -35,16 +35,33 @@ class ProteinDCWebsiteCloudFrontDeployStack(cdk.Stack):
 
     def _create_cdn(self, access_identity, s3_bucket):
         """ Returns a CDN that delivers from a S3 bucket """
-        return cloudfront.Distribution(
-            self,
-            'ProteinDataWebsiteDist',
-            default_behavior=cloudfront.BehaviorOptions(
-                origin=origins.S3Origin(
-                    s3_bucket,
-                    origin_access_identity=access_identity,
+        if(config.WEB_CERT_ARN):
+            return cloudfront.Distribution(
+                self,
+                'ProteinDataWebsiteDist',
+                default_behavior=cloudfront.BehaviorOptions(
+                    origin=origins.S3Origin(
+                        s3_bucket,
+                        origin_access_identity=access_identity,
+                    ),
+                    viewer_protocol_policy=cloudfront.ViewerProtocolPolicy.REDIRECT_TO_HTTPS
                 ),
-            ),
-            domain_names = [config.WEB_DOMAIN_NAME],
-            default_root_object=config.WEB_ROOT_FILE,
-            certificate = acm.Certificate.from_certificate_arn(self, "domainCert", config.WEB_CERT_ARN)
-        )
+                domain_names = [config.WEB_DOMAIN_NAME],
+                default_root_object=config.WEB_ROOT_FILE,
+                certificate = acm.Certificate.from_certificate_arn(self, "domainCert", config.WEB_CERT_ARN)
+            )
+        else:
+            return cloudfront.Distribution(
+                self,
+                'ProteinDataWebsiteDist',
+                default_behavior=cloudfront.BehaviorOptions(
+                    origin=origins.S3Origin(
+                        s3_bucket,
+                        origin_access_identity=access_identity,
+                    ),
+                    viewer_protocol_policy=cloudfront.ViewerProtocolPolicy.HTTPS_ONLY
+                ),
+                domain_names = [config.WEB_DOMAIN_NAME],
+                default_root_object=config.WEB_ROOT_FILE,
+            )
+            

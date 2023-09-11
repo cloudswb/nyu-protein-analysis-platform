@@ -11,10 +11,10 @@ class config():
     AGW_NAME = 'ProteinDataApi'
 
     WEB_BUCKET_NAME = "proteinxxx.xxx.com" #存储前端网页代码的存储桶名称 【必须修改】
-    WEB_DOMAIN_NAME = "proteinxx.xxx.com" #部署的自有域名 【必须修改】
+    WEB_DOMAIN_NAME = "proteinxx.xxx.com" #部署的自有域名 【建议修改】
     WEB_ROOT_FILE = "index.html" #网站默认页面
     WEB_UPLOAD_FOLDER = "../web" #网站在git代码中的位置
-    WEB_CERT_ARN = "" #网站使用的SSL证书ARN信息 【必须修改】
+    WEB_CERT_ARN = "" #网站使用的SSL证书ARN信息，默认为空代表不使用HTTPS访问【如果需要使用HTTPS则必须修改】
 
     MYSQL_DB_IDENTIFIER = 'nyu-mysql' #用于存储网络结构的RDS MySQL数据库的实例名称
     MYSQL_DEFAULT_DB_NAME = 'proteinog' #RDS数据库实例的默认数据库
