@@ -158,7 +158,7 @@ var cy = window.cy = cytoscape({
 var params = {
   name: 'cola',
   nodeSpacing: 5,
-  edgeLengthVal: 15,
+  edgeLengthVal: 5,
   networkdeep: 3,
   animate: true,
   randomize: false,
@@ -181,14 +181,14 @@ var sliders = [
     label: 'Edge length',
     param: 'edgeLengthVal',
     min: 1,
-    max: 200
+    max: 10
   },
 
   {
     label: 'Node spacing',
     param: 'nodeSpacing',
     min: 1,
-    max: 50
+    max: 10
   }
 ];
 
